@@ -1,0 +1,71 @@
+# =============================================================================
+# Virtual Event Hosting Platform — Python Dependencies
+# =============================================================================
+# Install:  pip install -r requirements.txt
+# Azure SQL (Phase 10): pip install -r requirements-azure.txt
+# =============================================================================
+
+# --- Web Framework ---
+Flask==3.1.0
+# Flask is the core web framework. Handles routing, requests, responses, templates.
+
+Werkzeug==3.1.3
+# WSGI utility library bundled with Flask. Provides password hashing, secure cookies,
+# and the development server.
+
+# --- Database ORM and Migrations ---
+Flask-SQLAlchemy==3.1.1
+# Integrates SQLAlchemy with Flask. Maps Python classes to database tables.
+
+Flask-Migrate==4.1.0
+# Wraps Alembic for database migrations (schema changes over time).
+
+SQLAlchemy==2.0.38
+# SQL toolkit and ORM. Generates parameterized SQL to prevent injection.
+
+# --- Authentication ---
+Flask-Login==0.6.3
+# Manages user sessions, login/logout, @login_required, remember-me cookies.
+
+# --- Forms and CSRF Protection ---
+Flask-WTF==1.2.2
+# Integrates WTForms with Flask. Adds CSRF tokens to all forms automatically.
+
+WTForms==3.2.1
+# Form validation library (email format, required fields, length checks).
+
+email-validator==2.2.0
+# Validates email addresses in WTForms EmailField.
+
+# --- Environment Variables ---
+python-dotenv==1.0.1
+# Loads variables from .env file into os.environ at startup.
+
+# --- Azure Blob Storage ---
+azure-storage-blob==12.24.1
+# SDK for uploading/downloading files to Azure Blob Storage (Phase 11).
+
+azure-core==1.32.0
+# Shared Azure SDK core (dependency of azure-storage-blob).
+
+# --- Production WSGI Server ---
+gunicorn==23.0.0
+# Production HTTP server for Linux App Service (replaces Flask dev server).
+
+# --- Azure Application Insights (Phase 14) ---
+azure-monitor-opentelemetry==1.6.4
+# Sends telemetry (requests, exceptions, performance) to Application Insights.
+
+opentelemetry-instrumentation-flask==0.49b2
+# Auto-instruments Flask routes for distributed tracing.
+
+# --- PDF Generation (Phase 13 — Certificates) ---
+reportlab==4.2.5
+# Generates PDF certificates server-side.
+
+# --- Testing (Phase 19) ---
+pytest==8.3.4
+# Test runner framework.
+
+pytest-flask==1.3.0
+# Flask test client fixtures and helpers for pytest.

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}My Events — VEHP{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-1">My Events</h1>
+            <p class="text-muted mb-0">Manage events you have created</p>
+        </div>
+        <a href="{{ url_for('events.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Create Event
+        </a>
+    </div>
+
+    {% if events %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Start</th>
+                        <th>Registrations</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('events.detail', event_id=event.id) }}">{{ event.title }}</a>
+                            </td>
+                            <td>
+                                <span class="badge text-capitalize
+                                    {% if event.status.value == 'published' %}bg-success
+                                    {% elif event.status.value == 'draft' %}bg-secondary
+                                    {% else %}bg-warning{% endif %}">
+                                    {{ event.status.value }}
+                                </span>
+                            </td>
+                            <td>{{ event.start_datetime | format_datetime }}</td>
+                            <td>{{ event.confirmed_registration_count }} / {{ event.max_capacity }}</td>
+                            <td>
+                                <a href="{{ url_for('events.edit', event_id=event.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                <a href="{{ url_for('qa.event_qa', event_id=event.id) }}" class="btn btn-sm btn-outline-info">Q&amp;A</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-plus display-1 text-muted"></i>
+            <p class="text-muted mt-3">You haven't created any events yet.</p>
+            <a href="{{ url_for('events.create') }}" class="btn btn-primary">Create Your First Event</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

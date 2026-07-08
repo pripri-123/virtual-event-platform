@@ -1,0 +1,17 @@
+{# Renders a row of Chart.js canvases. Pass charts = [{id, title, height?}, ...] #}
+{% if charts %}
+<div class="row g-4 mb-4">
+    {% for chart in charts %}
+    <div class="{{ chart.col | default('col-lg-6') }}">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase small mb-3">{{ chart.title }}</h6>
+                <div style="height: {{ chart.height | default(260) }}px;">
+                    <canvas id="{{ chart.id }}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

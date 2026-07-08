@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Events — VEHP{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold mb-1">Browse Events</h1>
+            <p class="text-muted mb-0">Find and register for upcoming virtual events</p>
+        </div>
+        {% if current_user.is_authenticated and current_user.role_name == 'organizer' %}
+            <a href="{{ url_for('events.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>Create Event
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-5">
+                    <input type="text" name="q" class="form-control" placeholder="Search events..."
+                           value="{{ search }}">
+                </div>
+                <div class="col-md-4">
+                    <select name="category" class="form-select">
+                        <option value="">All categories</option>
+                        <option value="conference" {% if category == 'conference' %}selected{% endif %}>Conference</option>
+                        <option value="workshop" {% if category == 'workshop' %}selected{% endif %}>Workshop</option>
+                        <option value="webinar" {% if category == 'webinar' %}selected{% endif %}>Webinar</option>
+                        <option value="meetup" {% if category == 'meetup' %}selected{% endif %}>Meetup</option>
+                        <option value="other" {% if category == 'other' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search me-1"></i>Search
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if events %}
+        <div class="row g-4">
+            {% for event in events %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <span class="badge bg-primary text-capitalize mb-2">{{ event.category }}</span>
+                            <h5 class="card-title">{{ event.title }}</h5>
+                            <p class="card-text text-muted small">
+                                {{ event.description[:120] }}{% if event.description and event.description|length > 120 %}...{% endif %}
+                            </p>
+                            <p class="small mb-1">
+                                <i class="bi bi-calendar me-1"></i>{{ event.start_datetime | format_datetime }}
+                            </p>
+                            <p class="small text-muted mb-3">
+                                <i class="bi bi-people me-1"></i>
+                                {{ event.confirmed_registration_count }} / {{ event.max_capacity }} seats filled
+                            </p>
+                            <a href="{{ url_for('events.detail', event_id=event.id) }}" class="btn btn-sm btn-outline-primary">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if pagination.pages > 1 %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('events.list_events', page=pagination.prev_num, q=search, category=category) }}">Previous</a>
+                    </li>
+                    {% for p in pagination.iter_pages() %}
+                        {% if p %}
+                            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('events.list_events', page=p, q=search, category=category) }}">{{ p }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                        <a class="page-link" href="{{ url_for('events.list_events', page=pagination.next_num, q=search, category=category) }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-calendar-x display-1 text-muted"></i>
+            <p class="text-muted mt-3">No published events found. Check back soon!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

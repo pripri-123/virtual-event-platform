@@ -1,0 +1,12 @@
+# =============================================================================
+# Azure SQL Dependencies — Install in Phase 10
+# =============================================================================
+# Requires: ODBC Driver 18 for SQL Server (installed on the OS, not via pip)
+# Install:  pip install -r requirements-azure.txt
+#
+# On Windows with Python 3.12, prebuilt wheels are available.
+# On Python 3.14 you may need Microsoft C++ Build Tools to compile pyodbc.
+# =============================================================================
+
+pyodbc>=5.3.0
+# Python ODBC bridge. Connects Flask/SQLAlchemy to Azure SQL Database.

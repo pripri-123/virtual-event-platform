@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}My Registrations — VEHP{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="fw-bold mb-4">My Registrations</h1>
+
+    {% if registrations %}
+        <div class="row g-4">
+            {% for reg in registrations %}
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ reg.event.title }}</h5>
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-calendar me-1"></i>{{ reg.event.start_datetime | format_datetime }}
+                            </p>
+                            <p class="small mb-3">
+                                Confirmation: <code>{{ reg.confirmation_code }}</code>
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="{{ url_for('events.detail', event_id=reg.event.id) }}" class="btn btn-sm btn-outline-primary">View Event</a>
+                                <a href="{{ url_for('qa.event_qa', event_id=reg.event.id) }}" class="btn btn-sm btn-outline-info">Q&amp;A</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-ticket-perforated display-1 text-muted"></i>
+            <p class="text-muted mt-3">You haven't registered for any events yet.</p>
+            <a href="{{ url_for('events.list_events') }}" class="btn btn-primary">Browse Events</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

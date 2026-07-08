@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}{{ event.title }} — VEHP{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <span class="badge bg-primary text-capitalize mb-2">{{ event.category }}</span>
+            <span class="badge text-capitalize mb-2
+                {% if event.status.value == 'published' %}bg-success
+                {% elif event.status.value == 'draft' %}bg-secondary
+                {% else %}bg-warning{% endif %}">
+                {{ event.status.value }}
+            </span>
+
+            <h1 class="fw-bold">{{ event.title }}</h1>
+            <p class="text-muted">
+                Organized by {{ event.organizer.full_name }} &middot;
+                {{ event.start_datetime | format_datetime }} – {{ event.end_datetime | format_datetime }}
+            </p>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5>About this event</h5>
+                    <p>{{ event.description or 'No description provided.' }}</p>
+                    <p class="mb-0 small text-muted">
+                        <i class="bi bi-people me-1"></i>
+                        {{ event.confirmed_registration_count }} / {{ event.max_capacity }} seats filled
+                        {% if event.seats_available > 0 %}
+                            ({{ event.seats_available }} available)
+                        {% else %}
+                            <span class="text-danger">(Full)</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            {% if question_count > 0 %}
+                <a href="{{ url_for('qa.event_qa', event_id=event.id) }}" class="btn btn-outline-info mb-3">
+                    <i class="bi bi-chat-dots me-1"></i>Q&amp;A ({{ question_count }} questions)
+                </a>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Actions</h5>
+
+                    {% if can_manage %}
+                        <a href="{{ url_for('events.edit', event_id=event.id) }}" class="btn btn-outline-secondary w-100 mb-2">Edit Event</a>
+                        <a href="{{ url_for('qa.event_qa', event_id=event.id) }}" class="btn btn-outline-info w-100 mb-2">Manage Q&amp;A</a>
+                        <form method="POST" action="{{ url_for('events.delete', event_id=event.id) }}"
+                              onsubmit="return confirm('Delete this event permanently?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-outline-danger w-100">Delete Event</button>
+                        </form>
+
+                    {% elif current_user.is_authenticated and current_user.role_name == 'participant' %}
+                        {% if event.status.value == 'published' %}
+                            {% if registration %}
+                                <div class="alert alert-success small">
+                                    <i class="bi bi-check-circle me-1"></i>You are registered!
+                                    <br>Code: <strong>{{ registration.confirmation_code[:8] }}...</strong>
+                                </div>
+                                <a href="{{ url_for('qa.event_qa', event_id=event.id) }}" class="btn btn-info w-100 mb-2">
+                                    <i class="bi bi-chat-dots me-1"></i>Join Q&amp;A
+                                </a>
+                                <form method="POST" action="{{ url_for('registrations.cancel', event_id=event.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-outline-danger w-100">Cancel Registration</button>
+                                </form>
+                            {% elif event.seats_available > 0 %}
+                                <form method="POST" action="{{ url_for('registrations.register', event_id=event.id) }}">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="bi bi-person-plus me-1"></i>Register for Event
+                                    </button>
+                                </form>
+                            {% else %}
+                                <button class="btn btn-secondary w-100" disabled>Event Full</button>
+                            {% endif %}
+                        {% endif %}
+
+                    {% elif not current_user.is_authenticated and event.status.value == 'published' %}
+                        <p class="text-muted small">Log in as a participant to register.</p>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary w-100">Log In to Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

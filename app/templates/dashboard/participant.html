@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Participant Dashboard — VEHP{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="fw-bold mb-1">Participant Dashboard</h1>
+    <p class="text-muted mb-4">Welcome, {{ current_user.full_name }}</p>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center p-3">
+                <h6 class="text-muted text-uppercase small">Registered Events</h6>
+                <p class="fs-2 fw-bold text-primary mb-0">{{ stats.registered_events }}</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center p-3">
+                <h6 class="text-muted text-uppercase small">Upcoming</h6>
+                <p class="fs-2 fw-bold text-success mb-0">{{ stats.upcoming_events }}</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm text-center p-3">
+                <h6 class="text-muted text-uppercase small">Unread Notifications</h6>
+                <p class="fs-2 fw-bold text-info mb-0">{{ stats.unread_notifications }}</p>
+            </div>
+        </div>
+    </div>
+
+    {% if analytics.category_breakdown.labels %}
+    {% set charts = [{'id': 'chart-categories', 'title': 'My Event Categories', 'col': 'col-lg-6'}] %}
+    {% include "partials/analytics_charts.html" %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <h5 class="fw-bold mb-3">Upcoming Events</h5>
+            {% if upcoming %}
+                <div class="list-group">
+                    {% for reg in upcoming %}
+                        <a href="{{ url_for('events.detail', event_id=reg.event.id) }}" class="list-group-item list-group-item-action">
+                            <strong>{{ reg.event.title }}</strong>
+                            <br><small class="text-muted">{{ reg.event.start_datetime | format_datetime }}</small>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">No upcoming events. <a href="{{ url_for('events.list_events') }}">Browse events</a>.</p>
+            {% endif %}
+        </div>
+        <div class="col-lg-6 mb-4">
+            <h5 class="fw-bold mb-3">Recent Notifications</h5>
+            {% if recent_notifications %}
+                {% for n in recent_notifications %}
+                    <div class="card border-0 shadow-sm mb-2">
+                        <div class="card-body py-2 px-3">
+                            <strong class="small">{{ n.title }}</strong>
+                            <p class="mb-0 small text-muted">{{ n.body[:80] }}{% if n.body|length > 80 %}...{% endif %}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+                <a href="{{ url_for('notifications.list_notifications') }}" class="btn btn-sm btn-outline-primary">View all</a>
+            {% else %}
+                <p class="text-muted">No notifications yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if analytics.category_breakdown.labels %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+window.VEHP_CHARTS = [
+    {
+        id: "chart-categories",
+        type: "doughnut",
+        labels: {{ analytics.category_breakdown.labels | tojson }},
+        datasets: [{ label: "Events", data: {{ analytics.category_breakdown.data | tojson }} }],
+    },
+];
+</script>
+<script src="{{ url_for('static', filename='js/analytics-charts.js') }}"></script>
+{% endif %}
+{% endblock %}

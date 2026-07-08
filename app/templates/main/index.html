@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Home — Virtual Event Platform{% endblock %}
+
+{% block content %}
+<section class="hero-section text-white py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bold mb-3">
+                    Host Virtual Events with Confidence
+                </h1>
+                <p class="lead mb-4">
+                    Create events, manage sessions, register participants, and deliver
+                    certificates — all powered by Flask and Microsoft Azure.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{{ url_for('events.list_events') }}" class="btn btn-light btn-lg px-4">
+                        <i class="bi bi-search me-2"></i>Browse Events
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-person-plus me-2"></i>Get Started
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <i class="bi bi-camera-video display-1 opacity-75"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center fw-bold mb-5">Platform Features</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-calendar3 text-primary fs-1 mb-3"></i>
+                        <h5 class="card-title">Event Management</h5>
+                        <p class="card-text text-muted">
+                            Organizers create, schedule, and publish virtual events with full CRUD support.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-people text-primary fs-1 mb-3"></i>
+                        <h5 class="card-title">Registration System</h5>
+                        <p class="card-text text-muted">
+                            Participants register for events, receive confirmations, and download certificates.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-cloud text-primary fs-1 mb-3"></i>
+                        <h5 class="card-title">Azure Cloud</h5>
+                        <p class="card-text text-muted">
+                            Deployed on Azure App Service with SQL Database, Blob Storage, and Functions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container text-center">
+        <div class="alert alert-success d-inline-block" role="alert">
+            <i class="bi bi-check-circle me-2"></i>
+            <strong>MVP ready.</strong> Create events, register attendees, and join Q&amp;A sessions.
+        </div>
+    </div>
+</section>
+{% endblock %}

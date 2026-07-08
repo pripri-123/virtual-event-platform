@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+
+
+{% block title %}Organizer Dashboard — VEHP{% endblock %}
+
+
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h1 class="fw-bold mb-0">Organizer Dashboard</h1>
+
+            <p class="text-muted mb-0">Welcome, {{ current_user.full_name }}</p>
+
+        </div>
+
+        <a href="{{ url_for('events.create') }}" class="btn btn-primary">
+
+            <i class="bi bi-plus-circle me-1"></i>Create Event
+
+        </a>
+
+    </div>
+
+
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm text-center p-3">
+
+                <h6 class="text-muted text-uppercase small">My Events</h6>
+
+                <p class="fs-2 fw-bold text-primary mb-0">{{ stats.total_events }}</p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm text-center p-3">
+
+                <h6 class="text-muted text-uppercase small">Published</h6>
+
+                <p class="fs-2 fw-bold text-success mb-0">{{ stats.published_events }}</p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm text-center p-3">
+
+                <h6 class="text-muted text-uppercase small">Total Registrations</h6>
+
+                <p class="fs-2 fw-bold text-info mb-0">{{ stats.total_registrations }}</p>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm text-center p-3">
+
+                <h6 class="text-muted text-uppercase small">Upcoming</h6>
+
+                <p class="fs-2 fw-bold text-warning mb-0">{{ stats.upcoming_events }}</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    {% set charts = [
+
+        {'id': 'chart-reg-trend', 'title': 'Registrations (30 days)', 'col': 'col-lg-8'},
+
+        {'id': 'chart-reg-by-event', 'title': 'Registrations by Event'},
+
+        {'id': 'chart-events-status', 'title': 'Events by Status'},
+
+        {'id': 'chart-events-category', 'title': 'Events by Category'},
+
+    ] %}
+
+    {% include "partials/analytics_charts.html" %}
+
+
+
+    <h5 class="fw-bold mb-3">Upcoming Events</h5>
+
+    {% if recent_events %}
+
+        <div class="list-group">
+
+            {% for event in recent_events %}
+
+                <a href="{{ url_for('events.detail', event_id=event.id) }}" class="list-group-item list-group-item-action">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>{{ event.title }}</strong>
+
+                        <span class="text-muted small">{{ event.start_datetime | format_datetime }}</span>
+
+                    </div>
+
+                    <small class="text-muted">{{ event.confirmed_registration_count }} registrations</small>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p class="text-muted">No events yet. <a href="{{ url_for('events.create') }}">Create one</a>.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+
+{% block extra_js %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+<script>
+
+window.VEHP_CHARTS = [
+
+    {
+
+        id: "chart-reg-trend",
+
+        type: "line",
+
+        labels: {{ analytics.registration_trend.labels | tojson }},
+
+        datasets: [{ label: "Registrations", data: {{ analytics.registration_trend.data | tojson }} }],
+
+    },
+
+    {
+
+        id: "chart-reg-by-event",
+
+        type: "bar",
+
+        labels: {{ analytics.registrations_by_event.labels | tojson }},
+
+        datasets: [{ label: "Registrations", data: {{ analytics.registrations_by_event.data | tojson }} }],
+
+    },
+
+    {
+
+        id: "chart-events-status",
+
+        type: "doughnut",
+
+        labels: {{ analytics.events_by_status.labels | tojson }},
+
+        datasets: [{ label: "Events", data: {{ analytics.events_by_status.data | tojson }} }],
+
+    },
+
+    {
+
+        id: "chart-events-category",
+
+        type: "bar",
+
+        labels: {{ analytics.events_by_category.labels | tojson }},
+
+        datasets: [{ label: "Events", data: {{ analytics.events_by_category.data | tojson }} }],
+
+    },
+
+];
+
+</script>
+
+<script src="{{ url_for('static', filename='js/analytics-charts.js') }}"></script>
+
+{% endblock %}
+
+

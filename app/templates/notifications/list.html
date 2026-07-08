@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications — VEHP{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold mb-0">Notifications</h1>
+        {% if notifications %}
+            <form method="POST" action="{{ url_for('notifications.mark_all_read') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Mark all read</button>
+            </form>
+        {% endif %}
+    </div>
+
+    {% if notifications %}
+        <div class="list-group">
+            {% for n in notifications %}
+                <div class="list-group-item list-group-item-action {% if not n.is_read %}list-group-item-primary{% endif %}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">{{ n.title }}</h6>
+                            <p class="mb-1 small">{{ n.body }}</p>
+                            <small class="text-muted">{{ n.created_at | format_datetime }}</small>
+                        </div>
+                        {% if not n.is_read %}
+                            <form method="POST" action="{{ url_for('notifications.mark_read', notification_id=n.id) }}">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Mark read</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-bell display-1"></i>
+            <p class="mt-2">No notifications yet.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
