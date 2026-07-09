@@ -372,7 +372,7 @@ class ChatMessage(db.Model):
     )
 
     id = db.Column(db.Integer, primary_key=True)
-    event_id = db.Column(db.Integer, db.ForeignKey("events.id", ondelete="CASCADE"), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey("events.id"), nullable=False)
     session_id = db.Column(db.Integer, db.ForeignKey("sessions.id", ondelete="SET NULL"), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
     message = db.Column(db.Text, nullable=False)
