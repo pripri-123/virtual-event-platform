@@ -72,6 +72,16 @@ def register_commands(app):
             click.echo(f"Query test: SELECT 1 => {row[0]}")
         except Exception as exc:
             click.echo(f"Connection failed: {exc}", err=True)
+            err_text = str(exc).lower()
+            if "timeout" in err_text or "08001" in err_text:
+                click.echo(
+                    "\nLikely cause: Azure SQL firewall is blocking your IP.\n"
+                    "Fix in Azure Portal → SQL Server → Networking:\n"
+                    "  1. Add your client IPv4 address\n"
+                    "  2. Enable 'Allow Azure services and resources to access this server'\n"
+                    "Then retry: flask db-check-azure",
+                    err=True,
+                )
             raise SystemExit(1) from exc
 
     @app.cli.command("seed-demo")

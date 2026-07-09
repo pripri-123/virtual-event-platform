@@ -16,7 +16,7 @@ def get_csrf(html: str) -> str:
 
 
 def main() -> int:
-    app = create_app()
+    app = create_app("development")
     client = app.test_client()
 
     # Organizer login

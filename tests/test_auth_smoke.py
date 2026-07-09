@@ -16,7 +16,7 @@ def get_csrf(html: str) -> str:
 
 
 def main() -> int:
-    app = create_app()
+    app = create_app("development")
     client = app.test_client()
     test_email = f"participant_{uuid.uuid4().hex[:8]}@test.com"
 

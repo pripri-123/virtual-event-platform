@@ -167,8 +167,8 @@ def upgrade():
     sa.Column('message', sa.Text(), nullable=False),
     sa.Column('sent_at', sa.DateTime(), nullable=False),
     sa.Column('is_question', sa.Boolean(), nullable=False),
-    sa.ForeignKeyConstraint(['event_id'], ['events.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['session_id'], ['sessions.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['event_id'], ['events.id']),
+    sa.ForeignKeyConstraint(['session_id'], ['sessions.id']),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -195,7 +195,7 @@ def upgrade():
     sa.Column('poll_option_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('responded_at', sa.DateTime(), nullable=False),
-    sa.ForeignKeyConstraint(['poll_id'], ['polls.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['poll_id'], ['polls.id']),
     sa.ForeignKeyConstraint(['poll_option_id'], ['poll_options.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),

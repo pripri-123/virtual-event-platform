@@ -28,7 +28,11 @@ def create_app(config_name: str | None = None) -> Flask:
         config_name = os.environ.get("FLASK_ENV", "development")
 
     app = Flask(__name__)
-    app.config.from_object(config_by_name[config_name])
+    config_class = config_by_name[config_name]
+    app.config.from_object(config_class)
+
+    if hasattr(config_class, "init_app"):
+        config_class.init_app(app)
 
     # Ensure instance/ folder exists for SQLite database file
     instance_path = Path(app.instance_path)
